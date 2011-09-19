@@ -1,0 +1,10 @@
+debug
+release
+*.vcproj.*.*.user
+*/Debug
+*/Release
+*.ncb
+*.pcb
+*.ilk
+*.idb
+*.tlb

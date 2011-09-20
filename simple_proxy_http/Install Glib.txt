@@ -1,0 +1,9 @@
+Linux
+	yum install glib glib-devel
+	apt-get instal glib glib-dev
+
+Windows
+	Goto http://www.gtk.org/download/win32.php
+	Download Glib Runtime and Dev
+	Extract glib_2.xx.xx_win32.zip、glib-dev_2.xx.x_win32.zip to C:\win32-libs\glib
+	copy C:\win32-libs\glib\bin\*.dll to your system32 folder

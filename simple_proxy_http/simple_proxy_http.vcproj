@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;F:\sctp\UMP\glib\include\glib-2.0&quot;;&quot;F:\sctp\UMP\glib\lib\glib-2.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\win32-libs\glib\include\glib-2.0&quot;;&quot;C:\win32-libs\glib\lib\glib-2.0\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,7 +64,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="glib-2.0.lib gthread-2.0.lib WS2_32.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;F:\sctp\UMP\libiconv-1.9.1.bin.woe32&quot;;F:\sctp\UMP\glib\lib"
+				AdditionalLibraryDirectories="&quot;F:\sctp\UMP\libiconv-1.9.1.bin.woe32&quot;;&quot;C:\win32-libs\glib\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -120,7 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;F:\sctp\UMP\glib\include\glib-2.0&quot;;&quot;F:\sctp\UMP\glib\lib\glib-2.0\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\win32-libs\glib\include\glib-2.0&quot;;&quot;C:\win32-libs\glib\lib\glib-2.0\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -142,7 +142,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="glib-2.0.lib gthread-2.0.lib WS2_32.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;F:\sctp\UMP\libiconv-1.9.1.bin.woe32&quot;;F:\sctp\UMP\glib\lib"
+				AdditionalLibraryDirectories="&quot;F:\sctp\UMP\libiconv-1.9.1.bin.woe32&quot;;&quot;C:\win32-libs\glib\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

@@ -605,7 +605,7 @@ int get_host_and_port(gchar* buffer,gchar* host,gint host_len,gboolean* is_https
 		return -1;
 	}
 	if(host_e-host_s > host_len-1){
-		fprintf(stderr,"error: Host string is too long: len=%d, allow len=%d\n",host_e-host_s,host_len-1);
+		fprintf(stderr,"error: Host string is too long: len=%ld, allow len=%d\n",host_e-host_s,host_len-1);
 		return -1;
 	}
 	port_pos=g_strrstr_len(host_s,host_e-host_s,":");

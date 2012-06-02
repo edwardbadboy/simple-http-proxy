@@ -1,0 +1,14 @@
+A simple http proxy using glib thread for each client connection.
+Try to support https and IPv6.
+
+For the proxy to work properly, the buffer size is set to 1,
+otherwise g_io_read_chars() will accumlate data in the memory and
+does not return. This is different from recv(), recv will return even
+if the data received now can not fill full the buffer.
+Maybe using unblocking read can solve the problem.
+
+Implement persistent connection with client and server. Some client
+may request another server in a persistent connection, this proxy can
+not handle server change in the same persistent connection now, but
+it's not very hard to do this. Should check out the HTTP/1.1 RFC to
+look for the correct behavior.

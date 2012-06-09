@@ -246,7 +246,7 @@ gpointer serve_client(gpointer data){
 		return NULL;
 	}
 #ifdef WIN32
-	proxy->c.gch = g_io_channel_win32_new_fd(proxy->c.sock)
+	proxy->c.gch = g_io_channel_win32_new_socket(proxy->c.sock);
 #else
 	proxy->c.gch = g_io_channel_unix_new(proxy->c.sock);
 #endif
@@ -306,6 +306,9 @@ static int http_version_detect(const gchar *line, gsize line_len, http_version *
 
 
 static int http_persistent_connection_detect(const gchar *line, gsize line_len, gboolean *persist){
+#ifdef WIN32
+#define strncasecmp _strnicmp
+#endif
 	if(strncasecmp(line, "Connection: close\r\n", line_len)==0){
 		*persist = FALSE;
 		return 1;
@@ -314,6 +317,9 @@ static int http_persistent_connection_detect(const gchar *line, gsize line_len, 
 		*persist = TRUE;
 		return 1;
 	}
+#ifdef WIN32
+#undef strncasecmp
+#endif
 	return -1;
 }
 
@@ -604,7 +610,7 @@ int serve_client_header(p_proxy_sock proxy){
 		}
 		fprintf(stderr, "INFO: Connected to %s\n", host);
 #ifdef WIN32
-		proxy->s.gch = g_io_channel_win32_new_fd(proxy->s.sock)
+		proxy->s.gch = g_io_channel_win32_new_socket(proxy->s.sock);
 #else
 		proxy->s.gch = g_io_channel_unix_new(proxy->s.sock);
 #endif
@@ -772,12 +778,12 @@ gpointer serve_server(gpointer data){
 
 	if(proxy->ishttps){
 		GIOStatus r;
-		proxy->s.r_transfer_mode = HTTP_BODY;
-		proxy->s.content_len = -1;
 		//HTTPS: send ACCEPTED to client
 		//Connection Established
-		const char* httpsok="HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: 0\r\n\r\n";
 		/*const char* httpsok="HTTP/1.1 200 Connection Established\r\n\r\n";*/
+		const char* httpsok="HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: 0\r\n\r\n";
+		proxy->s.r_transfer_mode = HTTP_BODY;
+		proxy->s.content_len = -1;
 		r = gch_writechars(proxy->c.gch, httpsok, strlen(httpsok));
 		if(G_IO_STATUS_NORMAL != r){
 			return NULL;

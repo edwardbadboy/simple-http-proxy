@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simple_proxy_http", "simple_proxy_http\simple_proxy_http.vcproj", "{3AEB84E7-F70B-4047-B634-E882F15274A4}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simple_proxy_http", "simple_proxy_http\simple_proxy_http.vcxproj", "{3AEB84E7-F70B-4047-B634-E882F15274A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,5 +5,7 @@ Linux
 Windows
 	Goto http://www.gtk.org/download/win32.php
 	Download Glib Runtime and Dev
+	Download gettext Rumtime
 	Extract glib_2.xx.xx_win32.zip、glib-dev_2.xx.x_win32.zip to C:\win32-libs\glib
-	copy C:\win32-libs\glib\bin\*.dll to your system32 folder
+	Extract gettext-runtime_x.xx.x.x-x_win32.zip\bin\intl.dll
+	copy C:\win32-libs\glib\bin\*.dll and intl.dll to the same dir as our compiled simple_proxy_http.exe

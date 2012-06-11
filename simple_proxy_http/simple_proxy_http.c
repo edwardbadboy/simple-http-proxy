@@ -687,12 +687,12 @@ int serve_client_body(p_proxy_sock proxy){
 	GIOStatus writer;
 	gchar buffer[BUFSIZE]={0};
 	gsize read_count=0;
-	long contentl = proxy->c.content_len;
+	/*long contentl = proxy->c.content_len;*/
 
 	fprintf(stderr, "DEBUG: client body mode\n");
 
 	while(1){
-		readr = gch_readchars(cch, buffer, cal_length(proxy->c.content_len, sizeof(buffer)),
+		readr = gch_readchars_trybest(cch, buffer, cal_length(proxy->c.content_len, sizeof(buffer)),
 							 &read_count);
 		if(readr!=G_IO_STATUS_NORMAL){
 			break;
@@ -910,12 +910,12 @@ int serve_server_body(p_proxy_sock proxy){
 	GIOStatus writer;
 	gchar buffer[BUFSIZE]={0};
 	gsize read_count=0;
-	long contentl = proxy->s.content_len;
+	/*long contentl = proxy->s.content_len;*/
 
 	fprintf(stderr, "DEBUG: server body mode\n");
 
 	while(1){
-		readr = gch_readchars(sch, buffer, cal_length(proxy->s.content_len, sizeof(buffer)),
+		readr = gch_readchars_trybest(sch, buffer, cal_length(proxy->s.content_len, sizeof(buffer)),
 							 &read_count);
 		if(readr!=G_IO_STATUS_NORMAL){
 			break;
@@ -1083,13 +1083,55 @@ GIOStatus gch_readline(GIOChannel *gch, gchar **line, gsize *line_len, gsize *te
 }
 
 
-GIOStatus gch_readchars(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read){
+GIOStatus gch_readchars_full(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read){
 	GIOStatus r;
 	r = g_io_channel_read_chars(gch, buf, count, bytes_read, NULL);
 	while(G_IO_STATUS_AGAIN == r){
 		r = g_io_channel_read_chars(gch, buf, count, bytes_read, NULL);
 	}
 	return r;
+}
+
+
+GIOStatus gch_readchars_trybest(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read){
+	GIOStatus r;
+	GIOCondition b;
+	gsize readc = 0;
+	gsize read1b = 0;
+	ssize_t recc = 0;
+	b = g_io_channel_get_buffer_condition(gch);
+	while((b & G_IO_IN) && (readc < count)){
+		r = g_io_channel_read_chars(gch, buf + readc, 1, &read1b, NULL);
+		if(G_IO_STATUS_NORMAL != r){
+			if(readc > 0){
+				*bytes_read = readc;
+				return G_IO_STATUS_NORMAL;
+			}
+			*bytes_read = 0;
+			return r;
+		}
+		readc += read1b;
+		b = g_io_channel_get_buffer_condition(gch);
+	}
+
+	recc = recv(g_io_channel_unix_get_fd(gch), buf + readc, count - readc, 0);
+	while(recc < 0){
+		if(recc < 0 && errno != EINTR){
+			break;
+		}
+		recc = recv(g_io_channel_unix_get_fd(gch), buf + readc, count - readc, 0);
+	}
+	if(recc == 0){
+		*bytes_read = readc;
+		return G_IO_STATUS_NORMAL;
+	}
+	if(recc < 0){
+		*bytes_read = 0;
+		return G_IO_STATUS_ERROR;
+	}
+
+	*bytes_read = readc + recc;
+	return G_IO_STATUS_NORMAL;
 }
 
 

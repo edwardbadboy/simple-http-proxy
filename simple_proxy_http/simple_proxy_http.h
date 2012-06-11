@@ -19,7 +19,7 @@
 #include <errno.h>
 #include <glib.h>
 
-#define BUFSIZE 1
+#define BUFSIZE 4096
 
 #ifdef WIN32
 #define PSOCK SOCKET
@@ -86,6 +86,7 @@ PSOCK proxy_connect(const char *domain,int port);
 gint transform_http_request_uri(const gchar* srcbuf, gint srclen, gchar* desbuf);
 
 GIOStatus gch_readline(GIOChannel *gch, gchar **line, gsize *line_len, gsize *term_pos);
-GIOStatus gch_readchars(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read);
+GIOStatus gch_readchars_full(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read);
+GIOStatus gch_readchars_trybest(GIOChannel *gch, gchar *buf, gsize count, gsize *bytes_read);
 GIOStatus gch_flush(GIOChannel *gch);
 GIOStatus gch_writechars(GIOChannel *gch, const gchar *buf, gssize count);

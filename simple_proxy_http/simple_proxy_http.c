@@ -1098,7 +1098,11 @@ GIOStatus gch_readchars_trybest(GIOChannel *gch, gchar *buf, gsize count, gsize 
 	GIOCondition b;
 	gsize readc = 0;
 	gsize read1b = 0;
+#ifdef WIN32
+	long recc = 0;
+#else
 	ssize_t recc = 0;
+#endif
 	b = g_io_channel_get_buffer_condition(gch);
 	while((b & G_IO_IN) && (readc < count)){
 		r = g_io_channel_read_chars(gch, buf + readc, 1, &read1b, NULL);

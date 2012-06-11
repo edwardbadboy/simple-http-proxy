@@ -266,7 +266,9 @@ gpointer serve_client(gpointer data){
 	fprintf(stderr, "INFO: Client closes connection\n");
 
 	shutdown(proxy->s.sock,SHUT_WR);
+	g_io_channel_get_flags(proxy->s.gch);
 	shutdown(proxy->c.sock,SHUT_RD);
+	g_io_channel_get_flags(proxy->c.gch);
 	g_usleep(1000000);
 	if(proxy->s.t){
 		g_thread_join(proxy->s.t);
@@ -802,7 +804,9 @@ gpointer serve_server(gpointer data){
 	fprintf(stderr, "INFO: Server closes connection\n");
 
 	shutdown(proxy->s.sock,SHUT_RD);
+	g_io_channel_get_flags(proxy->s.gch);
 	shutdown(proxy->c.sock,SHUT_WR);
+	g_io_channel_get_flags(proxy->c.gch);
 	return NULL;
 }
 

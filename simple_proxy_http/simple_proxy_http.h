@@ -63,6 +63,7 @@ typedef struct _proxy_sock{
 	endpoint_status s;
 	gboolean ishttps;
 	gboolean persistent_conn;
+	gchar server_host[256];
 }proxy_sock,*p_proxy_sock;
 
 

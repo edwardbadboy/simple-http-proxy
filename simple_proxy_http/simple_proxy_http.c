@@ -494,7 +494,7 @@ int serve_client_header(p_proxy_sock proxy){
 	GIOChannel *cch=proxy->c.gch;
 	GIOStatus r;
 	gint port = 80;
-	gchar host[1024] = {0};
+	gchar host[sizeof(proxy->server_host)] = {0};
 
 	fprintf(stderr, "DEBUG: client header mode\n");
 
@@ -511,6 +511,8 @@ int serve_client_header(p_proxy_sock proxy){
 		}
 		return -1;
 	}
+
+	fprintf(stderr, "DEBUG: URI %s", line);
 
 	//detect HTTP version
 	proxy->ishttps = https_detect(line, line_len);
@@ -552,6 +554,7 @@ int serve_client_header(p_proxy_sock proxy){
 			return -1;
 		}
 		g_free(line);
+		fprintf(stderr, "DEBUG: Parsed URI %s", new_uri);
 		g_ptr_array_add(proxy->c.headers, (gpointer)new_uri);
 	}
 
@@ -575,7 +578,9 @@ int serve_client_header(p_proxy_sock proxy){
 
 		//if we are https, then port is already detected in the requested uri
 		//so set the existing port infor as the default port info
-		http_host_port_detect(line, line_len, host, sizeof(host), &port, port);
+		if(http_host_port_detect(line, line_len, host, sizeof(host), &port, port) != -1){
+			fprintf(stderr, "DEBUG: Parsed Host %s: %s", host, line);
+		}
 
 		{
 			gboolean persist = FALSE;
@@ -604,9 +609,25 @@ int serve_client_header(p_proxy_sock proxy){
 		}
 	}*/
 
+	if(host[0] != '\0' && proxy->server_host[0] != '\0'){
+#ifdef WIN32
+#define strncasecmp _strnicmp
+#endif
+		if(strncasecmp(host, proxy->server_host, sizeof(host)) != 0){
+			fprintf(stderr, "ERROR: do no support connect to a different server %s in connection with %s\n",
+					host, proxy->server_host);
+			gch_flush(proxy->s.gch);
+			return -1;
+		}
+#ifdef WIN32
+#undef strncasecmp
+#endif
+	}
+
 	//if the remote server is not connected, then connect to it.
 	if(INVALID_SOCKET == proxy->s.sock){
 		proxy->s.sock = proxy_connect(host, port);
+		strncpy(proxy->server_host, host, sizeof(proxy->server_host) - 1);
 		if(INVALID_SOCKET == proxy->s.sock){
 			return -1;
 		}

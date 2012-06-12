@@ -319,6 +319,14 @@ static int http_persistent_connection_detect(const gchar *line, gsize line_len, 
 		*persist = TRUE;
 		return 1;
 	}
+	if(strncasecmp(line, "Proxy-Connection: close\r\n", line_len)==0){
+		*persist = FALSE;
+		return 1;
+	}
+	if(strncasecmp(line, "Proxy-Connection: keep-alive\r\n", line_len)==0){
+		*persist = TRUE;
+		return 1;
+	}
 #ifdef WIN32
 #undef strncasecmp
 #endif

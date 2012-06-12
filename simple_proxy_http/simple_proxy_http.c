@@ -149,7 +149,7 @@ gint setup_sockets(int argc, char* argv[])
 void endpoint_status_init(endpoint_status *st){
 	st->sock = INVALID_SOCKET;
 	st->r_transfer_mode = HTTP_HEADER;
-	st->content_len = -1;
+	st->content_len = 0;
 	st->http_ver = HTTP10;
 }
 
@@ -526,6 +526,11 @@ int serve_client_header(p_proxy_sock proxy){
 		proxy->persistent_conn = TRUE;
 	}
 
+	if(proxy->ishttps){
+		proxy->c.content_len = -1;
+	}else{
+		proxy->c.content_len = 0;
+	}
 	//HTTPS host and port information is in the request URI
 	if(proxy->ishttps){
 		int re = 0;
@@ -845,6 +850,8 @@ int serve_server_header(p_proxy_sock proxy){
 	if(proxy->s.headers == NULL){
 		return -1;
 	}
+
+	proxy->s.content_len = -1;
 
 	while(1){
 		//process through all the headers

@@ -1128,10 +1128,6 @@ GIOStatus gch_readchars_trybest(GIOChannel *gch, gchar *buf, gsize count, gsize 
 	while((b & G_IO_IN) && (readc < count)){
 		r = g_io_channel_read_chars(gch, buf + readc, 1, &read1b, NULL);
 		if(G_IO_STATUS_NORMAL != r){
-			if(readc > 0){
-				*bytes_read = readc;
-				return G_IO_STATUS_NORMAL;
-			}
 			*bytes_read = 0;
 			return r;
 		}
@@ -1141,17 +1137,22 @@ GIOStatus gch_readchars_trybest(GIOChannel *gch, gchar *buf, gsize count, gsize 
 
 	recc = recv(g_io_channel_unix_get_fd(gch), buf + readc, count - readc, 0);
 	while(recc < 0){
-		if(recc < 0 && errno != EINTR){
+		if(errno != EINTR){
 			break;
 		}
 		recc = recv(g_io_channel_unix_get_fd(gch), buf + readc, count - readc, 0);
 	}
 	if(recc == 0){
+		g_io_channel_get_flags(gch);
 		*bytes_read = readc;
+		if(0 == *bytes_read){
+			return G_IO_STATUS_EOF;
+		}
 		return G_IO_STATUS_NORMAL;
 	}
 	if(recc < 0){
 		*bytes_read = 0;
+		g_io_channel_get_flags(gch);
 		return G_IO_STATUS_ERROR;
 	}
 
